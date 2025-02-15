@@ -23,6 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   
+    // Restrict input to 10 digits
+    amountInput.addEventListener('input', () => {
+      if (amountInput.value.length > 10) {
+        amountInput.value = amountInput.value.slice(0, 10);
+      }
+    });
+  
     noConversionCheckbox.addEventListener('change', toggleCurrencyFields);
     convertButton.addEventListener('click', convertCurrency);
   
@@ -85,11 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   
-    // Expand click area for chevron toggle
-    menuToggle.addEventListener('click', () => {
-      // Already handled in the event listener above
-    });
-  
     // Set current year in footer
     const currentYear = new Date().getFullYear();
     document.getElementById('currentYear').textContent = currentYear;
@@ -113,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('englishEquivalent').innerHTML = '';
     }
   }
-  
   
   async function getExchangeRate(fromCurrency, toCurrency) {
     // Use the specified ExchangeRate-API
@@ -218,27 +219,44 @@ document.addEventListener('DOMContentLoaded', () => {
       // Units less than hundred are omitted
     ];
   
-    let remainder = Math.floor(number);
+    let remainder = BigInt(Math.floor(number));
     let result = '';
   
     // Display the number with Indian commas
-    const formattedIndianNumber = `<div class="formatted-number">${formatNumberIndian(remainder)}</div>`;
+    const formattedIndianNumber = `<div class="formatted-number">${formatNumberIndianBigInt(remainder)}</div>`;
     result += formattedIndianNumber;
   
     for (let unit of units) {
-      if (remainder >= unit.value) {
-        const unitValue = Math.floor(remainder / unit.value);
-        remainder = remainder % unit.value;
+      const unitValueBigInt = BigInt(unit.value);
+      if (remainder >= unitValueBigInt) {
+        const unitValue = remainder / unitValueBigInt;
+        remainder = remainder % unitValueBigInt;
   
         if (unit.symbol && unitValue > 0) {
           result += `
             <div class="unit-line">
-              <span><strong>${formatNumberIndian(unitValue)}</strong> ${unit.symbol}</span>
+              <span><strong>${formatNumberIndianBigInt(unitValue)}</strong> ${unit.symbol}</span>
               <span>(${unit.hindi} | ${unit.urdu})</span>
             </div>
           `;
         }
       }
+    }
+  
+    return result;
+  }
+  
+  // Function to format BigInt numbers with Indian commas
+  function formatNumberIndianBigInt(number) {
+    const x = number.toString();
+    const lastThree = x.substring(x.length - 3);
+    const otherNumbers = x.substring(0, x.length - 3);
+    let result = '';
+  
+    if (otherNumbers !== '') {
+      result = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree;
+    } else {
+      result = lastThree;
     }
   
     return result;

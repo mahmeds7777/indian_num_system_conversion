@@ -17,7 +17,7 @@ body {
     color: #2c3e50;
     cursor: pointer;
     font-size: 24px;
-    user-select: none; /* Prevent text selection */
+    user-select: none;
   }
   
   .small-screen-toggle {
@@ -124,14 +124,13 @@ body {
   /* Main Container */
   .container {
     flex: 1;
-    margin-left: 220px; /* Adjust to accommodate side menu */
     padding: 40px;
     box-sizing: border-box;
     background-color: #ffffff;
     min-height: 100vh;
     transition: margin-left 0.3s ease-in-out;
     max-width: 800px;
-    margin-right: auto;
+    margin: 0 auto; /* Center the container */
   }
   
   .container.full-width {
@@ -202,6 +201,10 @@ body {
     border-radius: 4px;
     margin-right: 10px;
     min-width: 150px;
+  }
+  
+  .input-group input[type="number"] {
+    max-width: 200px; /* Limit the width of the input field */
   }
   
   .input-group input[type="checkbox"] {
